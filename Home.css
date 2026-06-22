@@ -1,0 +1,440 @@
+/* =================================================
+   Design tokens
+   ================================================= */
+:root {
+  --bg: #F3F0EA;        /* warm plaster white */
+  --ink: #20242C;       /* graphite */
+  --muted: #767D8A;     /* slate grey */
+  --accent: #E0B978;    /* brass / cove-light glow */
+  --surface: #FFFFFF;
+
+  --font-display: 'Noto Serif Georgian', serif;
+  --font-body: 'Noto Sans Georgian', sans-serif;
+
+  --nav-h: 76px;
+}
+
+/* =================================================
+   Reset
+   ================================================= */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--bg);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* =================================================
+   Navbar
+   ================================================= */
+.navbar {
+ position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--nav-h);
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  background: var(--bg);
+}
+
+/* glow line under the navbar — the "cove light" signature */
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 5%;
+  right: 5%;
+  height: 2px;
+  background-color: rgb(255, 87, 87);
+ 
+  opacity: .8;
+  transform-origin: center;
+  animation: lineReveal .9s cubic-bezier(.16, 1, .3, 1) both;
+}
+
+.logo img {
+   padding: 10px;
+ width: 7rem;
+}
+
+/* =================================================
+   Inline nav links (visible on wider screens)
+   ================================================= */
+.nav-right {
+  display: flex;
+  align-items: center;
+ 
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.5rem, 3vw, 3rem);
+}
+
+.nav-links a {
+  position: relative;
+  padding-bottom: 6px;
+  font-size: 1rem;
+  letter-spacing: .03em;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  right: 50%;
+  bottom: 0;
+  height: 2px;
+  background-color: black;
+  transition: left .3s ease, right .3s ease;
+}
+
+.nav-links a:hover::after,
+.nav-links a:focus-visible::after {
+  left: 0;
+  right: 0;
+}
+
+.nav-links a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* =================================================
+   Burger button — two bars, morphs into an X
+   ================================================= */
+.burger {
+  position: relative;
+  z-index: 1001;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  width: 32px;
+  height: 26px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.burger span {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--ink);
+  transition: transform .35s ease;
+}
+
+.burger:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 6px;
+}
+
+.burger.active span:first-child {
+  transform: translateY(4.5px) rotate(45deg);
+}
+
+.burger.active span:last-child {
+  transform: translateY(-4.5px) rotate(-45deg);
+}
+
+/* =================================================
+   Responsive: collapse inline links into the burger
+   ================================================= */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
+
+  .burger {
+    display: flex;
+  }
+}
+@media (min-width: 769px) {
+  .menu-overlay {
+    display: none;
+  }
+}
+
+/* =================================================
+   Fullscreen menu overlay
+   ================================================= */
+.menu-overlay {
+  position: fixed;
+  top: calc(var(--nav-h) + 8px);
+  right: clamp(1.25rem, 4vw, 3rem);
+  z-index: 1000;
+  min-width: 200px;
+  background-color: gray;
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  transform-origin: top right;
+  transform: scale(.95) translateY(-8px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: transform .25s ease, opacity .25s ease, visibility .25s;
+}
+
+.menu-overlay.active {
+ transform: scale(1) translateY(0);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.menu-list {
+ list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.menu-list a {
+ display: block;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 500;
+  color: var(--bg);
+  letter-spacing: .02em;
+  transition: color .3s ease;
+}
+
+.menu-list a:hover,
+.menu-list a:focus-visible {
+  color: var(--accent);
+}
+
+.menu-list a:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 8px;
+}
+
+body.menu-open {
+  overflow: hidden;
+}
+
+/* =================================================
+   Motion
+   ================================================= */
+@keyframes lineReveal {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: .8; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .navbar::after,
+  .burger span,
+  .menu-overlay {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+/* The main container holding both photos */
+.photo-grid {
+  display: flex;
+  flex-wrap: wrap;       /* Allows photos to drop to the next line when screen shrinks */
+  gap: 20px;             /* Creates a clean space between the two photos */
+  width: 100%;
+  max-width: 1200px;     /* Prevents the section from getting too wide on massive screens */
+  margin: 0 auto;        /* Centers the whole grid on your page */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* The card wrapping each image */
+.photo-card {
+  flex: 1 1 450px;       /* 450px is the sweet spot. If the screen is smaller than 450px, it stacks! */
+  position: relative;    /* Allows us to style labels or buttons inside if needed */
+  border-radius: 8px;
+  overflow: hidden;      /* Keeps the image corners nice and clean */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* The images themselves */
+.responsive-image {
+  width: 100%;
+  height: 350px;         /* Forces both images to be the exact same height */
+  object-fit: cover;     /* Keeps the image perfectly proportioned without squishing */
+  display: block;
+}
+
+/* Text label styling (Optional, clean overlay) */
+.photo-label {
+  padding: 15px;
+  background-color: #ffffff;
+  color: #333333;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
+  border-top: 1px solid #eeeeee;
+}
+.photo-label button{
+ padding: 15px;
+  background-color: #ffffff;
+  color: #333333;
+  font-family: sans-serif;
+  font-weight: bold;
+  text-align: center;
+  font-size: 18px;
+cursor: pointer;
+width: 100%;
+}
+.photo-label button:hover{
+    background-color: lightgray;
+}
+.photo-label button:active{
+    background-color: gray;
+}
+.heading{
+font-size: 1.5rem;
+font-weight: bold;
+}
+.forheading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+.forinformation {
+    display: flex;
+    margin-top: 5rem;
+    width: 100%;
+    height: 28.5rem;
+    background-color: rgb(194, 147, 147);
+}
+
+.left {
+    width: 35%;
+    background-color: rgb(194, 147, 147);
+    border-right: 2px solid rgb(255, 193, 193);
+    display: flex;
+    flex-direction: column;
+}
+
+.flogo {
+    mix-blend-mode: multiply;
+    width: 6rem;
+    height: 6rem;
+    margin-left: 1rem;
+}
+
+.gugu {
+    display: flex;
+    width: 80%;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.grah {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.sak {
+    margin-top: 1rem;
+    display: flex;
+    width: 90%;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.sak1 {
+    display: flex;
+    gap: 1rem;
+}
+
+.fa-solid {
+    margin: 0;
+    margin-top: 0.2rem;
+}
+
+.number {
+    margin: 0;
+}
+
+.facebook {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.ixilet {
+    margin-bottom: 0.5rem;
+}
+
+.sak2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.hfmsh {
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.right {
+    width: 65%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+iframe {
+    width: 90%;
+    height: 90%;
+    display: block;
+    border: 0;
+}
+
+@media (max-width: 750px) {
+    .forinformation {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .left {
+        width: 100%;
+        border-right: none;
+        border-bottom: 2px solid rgb(255, 193, 193);
+        padding-bottom: 1rem;
+    }
+
+    .right {
+        width: 100%;
+        height: 300px;
+        padding: 1rem;
+    }
+
+    iframe {
+        width: 92%;
+        height: 92%;
+    }
+}
